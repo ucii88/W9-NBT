@@ -116,3 +116,107 @@ void PrintTree(Isi_Tree P) {
         }
     }
 }
+
+boolean SearchR(Isi_Tree P, int root, infotype X) {
+    if (root == nil) {
+        return false;
+    }
+    if (P[root].info == X) {
+        return true;
+    }
+    if (SearchR(P, P[root].ps_fs, X)) {
+        return true;
+    }
+    return SearchR(P, P[root].ps_nb, X);
+}
+
+boolean Search(Isi_Tree P, infotype X) {
+    if (IsEmpty(P)) {
+        return false;
+    }
+    return SearchR(P, 1, X);
+}
+
+int nbElmtR(Isi_Tree P, int root) {
+    if (root == nil) {
+        return 0;
+    }
+    return 1 + nbElmtR(P, P[root].ps_fs) + nbElmtR(P, P[root].ps_nb);
+}
+
+int nbElmt(Isi_Tree P) {
+    if (IsEmpty(P)) {
+        return 0;
+    }
+    return nbElmtR(P, 1);
+}
+
+int nbDaunR(Isi_Tree P, int root) {
+    if (root == nil) {
+        return 0;
+    }
+    if (P[root].ps_fs == nil) {
+        return 1 + nbDaunR(P, P[root].ps_nb);
+    } else {
+        return nbDaunR(P, P[root].ps_fs) + nbDaunR(P, P[root].ps_nb);
+    }
+}
+
+int nbDaun(Isi_Tree P) {
+    if (IsEmpty(P)) {
+        return 0;
+    }
+    return nbDaunR(P, 1);
+}
+
+int LevelR(Isi_Tree P, int root, infotype X, int currLevel) {
+    if (root == nil) {
+        return -1;
+    }
+    if (P[root].info == X) {
+        return currLevel;
+    }
+    int levelInChild = LevelR(P, P[root].ps_fs, X, currLevel + 1);
+    if (levelInChild != -1) {
+        return levelInChild;
+    }
+    return LevelR(P, P[root].ps_nb, X, currLevel);
+}
+
+int Level(Isi_Tree P, infotype X) {
+    if (IsEmpty(P)) {
+        return -1;
+    }
+    return LevelR(P, 1, X, 0);
+}
+
+int DepthR(Isi_Tree P, int root) {
+    if (root == nil) {
+        return -1;
+    }
+
+    int depthFirstChild = -1;
+    if (P[root].ps_fs != nil) {
+        depthFirstChild = DepthR(P, P[root].ps_fs);
+    }
+
+    int depthSibling = -1;
+    if (P[root].ps_nb != nil) {
+        depthSibling = DepthR(P, P[root].ps_nb);
+    }
+
+    int currentNodeDepth = depthFirstChild + 1;
+    
+    return Max(currentNodeDepth, depthSibling);
+}
+
+int Depth(Isi_Tree P) {
+    if (IsEmpty(P)) {
+        return 0;
+    }
+    return DepthR(P, 1) + 1;
+}
+
+int Max(infotype Data1, infotype Data2) {
+    return (Data1 > Data2) ? Data1 : Data2;
+}
